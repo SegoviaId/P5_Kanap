@@ -269,3 +269,74 @@ if (page.match("cart")) {
     valideClic();
   });
 }
+
+// texte sous champ email
+
+if (page.match("cart")) {
+  email.addEventListener("input", (e) => {
+    
+    valeur = e.target.value;
+    let regMatch = valeur.match(regMatchEmail);
+    let regValide = valeur.search(regValideEmail);
+    // si valeur est toujours un string vide et la regex différante de 0 (regex à -1 et le champ est vide mais pas d'erreur)
+    if (valeur === "" && regMatch === null) {
+      document.querySelector("#emailErrorMsg").textContent = "Veuillez renseigner votre email.";
+      document.querySelector("#emailErrorMsg").style.color = "white";
+      // si valeur n'est plus un string vide et la regex différante de 0 (regex à -1 et le champ n'est pas vide donc il y a une erreur)
+    } else if ( regValide !== 0) {
+      document.querySelector("#emailErrorMsg").innerHTML = "Caractère non valide";
+      document.querySelector("#emailErrorMsg").style.color = "white";
+      // pour le reste des cas (quand la regex ne décèle aucune erreur et est à 0 peu importe le champ vu qu'il est validé par la regex)
+    } else if (valeur != "" && regMatch == null) {
+      document.querySelector("#emailErrorMsg").innerHTML = "Caratères acceptés pour ce champ. Forme email pas encore conforme";
+      document.querySelector("#emailErrorMsg").style.color = "white";
+    } else {
+      document.querySelector("#emailErrorMsg").innerHTML = "Forme email conforme.";
+      document.querySelector("#emailErrorMsg").style.color = "white";
+    }
+  });
+}
+
+// fonction couleurRegex qui modifira la couleur de l'input par remplissage tapé, aide visuelle et accessibilité
+
+let valeurEcoute = "";
+// fonction réutilisable, la regex, la valeur d'écoute, et la réponse à l'écoute
+function couleurRegex(regSearch, valeurEcoute, inputAction) {
+ 
+  if (valeurEcoute === "" && regSearch != 0) {
+    inputAction.style.backgroundColor = "white";
+    inputAction.style.color = "black";
+    
+  } else if (valeurEcoute !== "" && regSearch != 0) {
+    inputAction.style.backgroundColor = "rgb(220, 50, 50)";
+    inputAction.style.color = "white";
+    
+  } else {
+    inputAction.style.backgroundColor = "rgb(0, 138, 0)";
+    inputAction.style.color = "white";
+  }
+}
+
+// fonction d'affichage individuel des paragraphes sous input sauf pour l'input email
+
+function texteInfo(regex, pointage, zoneEcoute) {
+      if (page.match("cart")) {
+      zoneEcoute.addEventListener("input", (e) => {
+      valeur = e.target.value;
+      index = valeur.search(regex);
+    
+      if (valeur === "" && index != 0) {
+        document.querySelector(pointage).textContent = "Veuillez renseigner ce champ.";
+        document.querySelector(pointage).style.color = "white";
+        
+      } else if (valeur !== "" && index != 0) {
+        document.querySelector(pointage).innerHTML = "Reformulez cette donnée";
+        document.querySelector(pointage).style.color = "white";
+        
+      } else {
+      document.querySelector(pointage).innerHTML = "Caratères acceptés pour ce champ.";
+      document.querySelector(pointage).style.color = "white";
+      }
+    });
+  }
+}
