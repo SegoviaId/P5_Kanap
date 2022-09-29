@@ -340,3 +340,93 @@ function texteInfo(regex, pointage, zoneEcoute) {
     });
   }
 }
+
+// Fonction de validation/d'accés au clic du bouton du formulaire
+
+let commande = document.querySelector("#order");
+
+function valideClic() {
+  let contactRef = JSON.parse(localStorage.getItem("contactClient"));
+  let somme =
+    contactRef.regexNormal + contactRef.regexAdresse + contactRef.regexEmail;
+  if (somme === 5) {
+    commande.removeAttribute("disabled", "disabled");
+    document.querySelector("#order").setAttribute("value", "Commander !");
+  } else {
+    commande.setAttribute("disabled", "disabled");
+    document.querySelector("#order").setAttribute("value", "Remplir le formulaire");
+  }
+}
+
+// Envoi de la commande
+
+if (page.match("cart")) {
+  commande.addEventListener("click", (e) => {
+    e.preventDefault();
+    valideClic();
+    envoiPaquet();
+  });
+}
+// fonction récupérations des id puis mis dans un tableau
+
+let panierId = [];
+function tableauId() {
+// appel des ressources
+let panier = JSON.parse(localStorage.getItem("panierStocké"));
+// récupération des id produit dans panierId
+if (panier && panier.length > 0) {
+  for (let indice of panier) {
+    panierId.push(indice._id);
+  }
+} else {
+  console.log("le panier est vide");
+  document.querySelector("#order").setAttribute("value", "Panier vide!");
+}
+}
+// fonction récupération des donnée client et panier avant transformation
+let contactRef;
+let commandeFinale;
+function paquet() {
+  contactRef = JSON.parse(localStorage.getItem("contactClient"));
+  // définition de l'objet commande
+  commandeFinale = {
+    contact: {
+      firstName: contactRef.firstName,
+      lastName: contactRef.lastName,
+      address: contactRef.address,
+      city: contactRef.city,
+      email: contactRef.email,
+    },
+    products: panierId,
+  };
+}
+
+// fonction sur la validation de l'envoi
+function envoiPaquet() {
+  tableauId();
+  paquet();
+  // vision sur l'envoie
+  console.log(commandeFinale);
+  let somme = contactRef.regexNormal + contactRef.regexAdresse + contactRef.regexEmail;
+  // si le panierId contient des articles et le clic est autorisé
+  if (panierId.length != 0 && somme === 5) {
+    // envoi à la ressource api
+    fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(commandeFinale),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        // envoyé à la page confirmation
+        window.location.href = `/front/html/confirmation.html?commande=${data.orderId}`;
+      })
+      .catch(function (err) {
+        console.log(err);
+        alert("erreur");
+      });
+  }
+}
