@@ -147,14 +147,16 @@ function totalProduit() {
 
   let totalArticle = 0;
   let totalPrix = 0;
+  let totalProduit = 0;
 
   const cart = document.querySelectorAll(".cart__item");
   cart.forEach((cart) => {
     totalArticle += JSON.parse(cart.dataset.quantité);
     totalPrix += cart.dataset.quantité * cart.dataset.prix;
+    totalProduit += cart.dataset._id = 1;
   });
   
-  document.getElementById("totalQuantity").textContent = totalArticle;
+  document.getElementById("totalQuantity").textContent = totalProduit;
   document.getElementById("totalPrice").textContent = totalPrix;
 }
 
